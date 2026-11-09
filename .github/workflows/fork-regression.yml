@@ -1,0 +1,26 @@
+name: Fork regression
+on:
+  pull_request:
+    branches: [github-main]
+  push:
+    branches: [hermes/final-B-ci-20261109]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  parser-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm exec tsx --test packages/cli/test/tp-level-keys.test.ts packages/cli/test/parser.test.ts
