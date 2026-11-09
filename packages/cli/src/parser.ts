@@ -556,13 +556,13 @@ export function parseTpLevel(s: string): Record<string, string> {
     }
     const key = pair.slice(0, colonIdx).trim();
     const value = pair.slice(colonIdx + 1).trim();
-    const mapped = TP_LEVEL_KEY_MAP[key];
-    if (!mapped) {
+    // Only declared keys are valid; inherited Object.prototype names are not fields.
+    if (!Object.prototype.hasOwnProperty.call(TP_LEVEL_KEY_MAP, key)) {
       throw new Error(
         `Unknown --tpLevel key: "${key}". Valid keys: ${Object.keys(TP_LEVEL_KEY_MAP).join(", ")}`,
       );
     }
-    result[mapped] = value;
+    result[TP_LEVEL_KEY_MAP[key]] = value;
   }
   return result;
 }
